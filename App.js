@@ -14,7 +14,10 @@ const App = () => {
   return (
     <>
       {start ? (
-        <GameScreen />
+        <GameScreen 
+          numOfSymbols={numOfSymbols}
+          numOfTries={numOfTries}
+        />
       ) : (
         <HomePage 
           numOfSymbols={numOfSymbols}
