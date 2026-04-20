@@ -55,7 +55,7 @@ const iconSet = [
   {key: '&', color: 'purple'}
 ];
 
-const GameScreen = ({numOfSymbols, numOfTries}) => {
+const GameScreen = ({numOfSymbols, numOfTries,setStart}) => {
   const [guesses, setGuesses] = useState(
     Array(numOfTries).fill(null).map(() => Array(4).fill(null))
   );
@@ -65,6 +65,7 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
 
   const activeIcons = iconSet.slice(0, numOfSymbols);
 
+ 
 
   const handleIconPress = (symbol) => {
   if (currentSlot < 4) {
@@ -85,8 +86,36 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
 
     setGuesses(newGuesses);
   }
-
   }
+
+  const handleUndo = () => {
+  const newGuesses = guesses.map(row => [...row]);
+
+    if (currentSlot > 0) {
+      newGuesses[currentRow][currentSlot - 1] = null;
+      setGuesses(newGuesses);
+      setCurrentSlot(currentSlot - 1);
+      return;
+    }
+    
+    if (currentRow < numOfTries - 1) {
+      const prevRow = currentRow + 1;
+
+      let lastIndex = -1;
+      for (let i = 0; i < 4; i++) {
+        if (newGuesses[prevRow][i] !== null) {
+          lastIndex = i;
+        }
+    }
+
+    if (lastIndex !== -1) {
+      newGuesses[prevRow][lastIndex] = null;
+      setGuesses(newGuesses);
+      setCurrentRow(prevRow);
+      setCurrentSlot(lastIndex);
+    }
+  }
+};
   
   const renderIcon = ({item}) => {
     return (
@@ -100,7 +129,6 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
   }
 
 
-
   const resetGame = () => {
   const emptyBoard = Array(numOfTries)
     .fill(null)
@@ -111,7 +139,6 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
   setCurrentSlot(0);
 };
 
-
   var inputBox = 
       <View style={styles.inputBoxContainer}>
         <FlatList
@@ -121,15 +148,13 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
           numColumns={3}
         />
         <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuButton}>
+          <TouchableOpacity style={styles.menuButton} onPress={() => setStart(false)}>
             <Text style={{textAlign: 'center'}}>Home</Text>
           </TouchableOpacity>
-
           <TouchableOpacity style={styles.menuButton} onPress={resetGame}>
-
             <Text style={{textAlign: 'center'}}>New</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton}>
+          <TouchableOpacity style={styles.menuButton} onPress={handleUndo}>
             <Text style={{textAlign: 'center'}}>Undo</Text>
           </TouchableOpacity>
         </View>
