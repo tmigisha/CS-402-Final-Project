@@ -65,13 +65,27 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
 
   const activeIcons = iconSet.slice(0, numOfSymbols);
 
+
   const handleIconPress = (symbol) => {
-    if (currentSlot < 4) {
-      const newGuesses = [...guesses];
-      newGuesses[currentRow][currentSlot] = symbol;
-      setGuesses(newGuesses);
-      setCurrentSlot(currentSlot + 1);
+  if (currentSlot < 4) {
+    const newGuesses = [...guesses];
+    newGuesses[currentRow][currentSlot] = symbol;
+
+    const nextSlot = currentSlot + 1;
+
+    // If row is complete, move up
+    if (nextSlot === 4) {
+      if (currentRow > 0) 
+        setCurrentRow(currentRow - 1); // move up a row
+        setCurrentSlot(0);             // reset slot
+       
+    } else {
+      setCurrentSlot(nextSlot);
     }
+
+    setGuesses(newGuesses);
+  }
+
   }
   
   const renderIcon = ({item}) => {
@@ -85,6 +99,19 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
     );
   }
 
+
+
+  const resetGame = () => {
+  const emptyBoard = Array(numOfTries)
+    .fill(null)
+    .map(() => Array(4).fill(null));
+
+  setGuesses(emptyBoard);
+  setCurrentRow(numOfTries - 1);
+  setCurrentSlot(0);
+};
+
+
   var inputBox = 
       <View style={styles.inputBoxContainer}>
         <FlatList
@@ -97,7 +124,9 @@ const GameScreen = ({numOfSymbols, numOfTries}) => {
           <TouchableOpacity style={styles.menuButton}>
             <Text style={{textAlign: 'center'}}>Home</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuButton}>
+
+          <TouchableOpacity style={styles.menuButton} onPress={resetGame}>
+
             <Text style={{textAlign: 'center'}}>New</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuButton}>
