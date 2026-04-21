@@ -19,11 +19,32 @@ const styles = StyleSheet.create({
   symbolText: {
     fontSize: 20,
     fontWeight: 'bold'
+  },
+  clueBox: {
+    borderWidth: 1, 
+    marginRight: 20, 
+    width: 80, 
+    flexDirection: 'row', 
+    flexWrap: 'wrap' 
   }
 });
 
 
-const BoardRow = ({item1, item2, item3, item4}) => {
+const BoardRow = ({item1, item2, item3, item4, patternCheck}) => {
+  const renderClue = ({item}) => {
+    if (item === 2) {
+      return (
+        <View style={{paddingHorizontal: 3}}><Text style={{fontSize: 18}}>+</Text></View>
+      )
+        }
+    if (item === 1) {
+      return (
+        <View style={{paddingHorizontal: 3}}><Text style={{fontSize: 18}}>-</Text></View>
+      )
+    }
+    return null;
+  }
+
   const renderSlot = (item) => {
     return (
       <View style={styles.square}>
@@ -34,7 +55,10 @@ const BoardRow = ({item1, item2, item3, item4}) => {
 
   return (
     <View style={styles.gameRow}>
-      <View style={[styles.square, {marginRight: 50}]}>
+      <View style={styles.clueBox}>
+        {patternCheck && patternCheck.map((val, idx) => (
+           <View key={idx}>{renderClue({item: val})}</View>
+        ))}
       </View>
 
       {renderSlot(item1)}
@@ -45,5 +69,5 @@ const BoardRow = ({item1, item2, item3, item4}) => {
   );
 }
 
-
 export default BoardRow;
+
