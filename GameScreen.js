@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, Button, StyleSheet, Text, View, Alert, useWindowDimensions } from 'react-native';
 import BoardRow from './BoardRow';
+import { generateSequence, compareSequence } from './scripts';
+
 
 const styles = StyleSheet.create({
   inputBoxContainer: {
@@ -55,67 +57,96 @@ const iconSet = [
   {key: '&', color: 'purple'}
 ];
 
-const GameScreen = ({numOfSymbols, numOfTries,setStart}) => {
+const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled}) => {
   const [guesses, setGuesses] = useState(
     Array(numOfTries).fill(null).map(() => Array(4).fill(null))
   );
-
+  const [rowClues, setRowClues] = useState(Array(numOfTries).fill([]));
   const [currentRow, setCurrentRow] = useState(numOfTries - 1);
   const [currentSlot, setCurrentSlot] = useState(0);
+  const [secretPattern, setSecretPattern] = useState([]);
+  const [winsGame, setWinsGame] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   const activeIcons = iconSet.slice(0, numOfSymbols);
 
- 
+  useEffect(() => {
+    const secretIndices = generateSequence(numOfSymbols, 4);
+    const patternObjects = secretIndices.map(index => iconSet[index]);
+    setSecretPattern(patternObjects); 
+    console.log(secretIndices);   
+  }, []);
 
   const handleIconPress = (symbol) => {
-  if (currentSlot < 4) {
-    const newGuesses = [...guesses];
-    newGuesses[currentRow][currentSlot] = symbol;
+    if (currentRow >= 0 && currentSlot < 4) {
+      const newGuesses = [...guesses];
+      newGuesses[currentRow][currentSlot] = symbol;
+      setGuesses(newGuesses);
 
-    const nextSlot = currentSlot + 1;
+      const nextSlot = currentSlot + 1;
 
-    // If row is complete, move up
-    if (nextSlot === 4) {
-      if (currentRow > 0) 
-        setCurrentRow(currentRow - 1); // move up a row
-        setCurrentSlot(0);             // reset slot
-       
-    } else {
-      setCurrentSlot(nextSlot);
+      if (nextSlot === 4) {
+        const result = compareSequence(secretPattern.map(s => s.key), 
+          newGuesses[currentRow].map(g => g.key), positionEnabled);
+        const newRowClues = [...rowClues];
+        newRowClues[currentRow] = result;
+        setRowClues(newRowClues);
+
+        setWinsGame(result.every(num => num == 2));
+    
+        if (currentRow === 0) {
+          setGameOver(true);
+        } else {
+          setCurrentRow(currentRow - 1); // move up a row
+          setCurrentSlot(0);             // reset slot
+        }   
+
+      } else {
+        setCurrentSlot(nextSlot);
+      }
     }
-
-    setGuesses(newGuesses);
-  }
   }
 
   const handleUndo = () => {
-  const newGuesses = guesses.map(row => [...row]);
+    const newGuesses = guesses.map(row => [...row]);
 
-    if (currentSlot > 0) {
-      newGuesses[currentRow][currentSlot - 1] = null;
-      setGuesses(newGuesses);
-      setCurrentSlot(currentSlot - 1);
-      return;
-    }
-    
-    if (currentRow < numOfTries - 1) {
-      const prevRow = currentRow + 1;
+      if (currentSlot > 0) {
+        newGuesses[currentRow][currentSlot - 1] = null;
+        setGuesses(newGuesses);
+        setCurrentSlot(currentSlot - 1);
+        return;
+      }
+      
+      if (currentRow < numOfTries - 1) {
+        const prevRow = currentRow + 1;
 
-      let lastIndex = -1;
-      for (let i = 0; i < 4; i++) {
-        if (newGuesses[prevRow][i] !== null) {
-          lastIndex = i;
+        let lastIndex = -1;
+        for (let i = 0; i < 4; i++) {
+          if (newGuesses[prevRow][i] !== null) {
+            lastIndex = i;
+          }
+        }
+
+        if (lastIndex !== -1) {
+          newGuesses[prevRow][lastIndex] = null;
+          setGuesses(newGuesses);
+          setCurrentRow(prevRow);
+          setCurrentSlot(lastIndex);
         }
     }
+  };
 
-    if (lastIndex !== -1) {
-      newGuesses[prevRow][lastIndex] = null;
-      setGuesses(newGuesses);
-      setCurrentRow(prevRow);
-      setCurrentSlot(lastIndex);
-    }
-  }
-};
+  const resetGame = () => {
+    const emptyBoard = Array(numOfTries)
+      .fill(null)
+      .map(() => Array(4).fill(null));
+
+    setSecretPattern(generateSequence(numOfSymbols, 4));
+    setGuesses(emptyBoard);
+    setCurrentRow(numOfTries - 1);
+    setCurrentSlot(0);
+  };
+
   
   const renderIcon = ({item}) => {
     return (
@@ -127,17 +158,7 @@ const GameScreen = ({numOfSymbols, numOfTries,setStart}) => {
       </TouchableOpacity>
     );
   }
-
-
-  const resetGame = () => {
-  const emptyBoard = Array(numOfTries)
-    .fill(null)
-    .map(() => Array(4).fill(null));
-
-  setGuesses(emptyBoard);
-  setCurrentRow(numOfTries - 1);
-  setCurrentSlot(0);
-};
+  
 
   var inputBox = 
       <View style={styles.inputBoxContainer}>
@@ -166,15 +187,16 @@ const GameScreen = ({numOfSymbols, numOfTries,setStart}) => {
       <View style={styles.board}>
         <FlatList
           data={guesses}
-          renderItem={({item}) => (
+          renderItem={({item, index}) => (
             <BoardRow
               item1={item[0] || {key: '', color: 'transparent'}}
               item2={item[1] || {key: '', color: 'transparent'}}
               item3={item[2] || {key: '', color: 'transparent'}}
               item4={item[3] || {key: '', color: 'transparent'}}
+              patternCheck={rowClues[index]}
             />
           )}
-          keyExtractor={(item) => item.key}
+          keyExtractor={(item, index) => index.toString()}
         />
 
       </View>
