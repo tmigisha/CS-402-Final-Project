@@ -22,12 +22,16 @@ function generateSequence(numSymbols, seqLength)
  * If the integers in a given position in both arrays match, returns 2.
  * If the integer in the first array matches an integer in a different position in the second array, returns a 1.
  * If there is no match, returns a 0.
+ * @param {int[]} checkArray 
+ * @param {int[]} answerArray 
+ * @param {boolean} inOrder 
+ * @returns 
  */
-function compareSequence(checkArray, answerArray)
+function compareSequence(checkArray, answerArray, inOrder)
 {
-    const length = checkArray.length();
+    const length = checkArray.length;
 
-    if(length !== answerArray.length())
+    if(length !== answerArray.length)
     {
         throw new Error("Array mismatch. Arrays must have the same length.");
         return;
@@ -67,6 +71,26 @@ function compareSequence(checkArray, answerArray)
             }
         }
     }
+
+    return inOrder ? result : obfuscateResponse(result);
+}
+
+function obfuscateResponse(array)
+{
+    const newArray = [];
+
+    for (var i = 2; i >=0; i--)
+    {
+        for (var j = 0; j < array.length; j++)
+        {
+            if(array[j] === i)
+            {
+                newArray.push(i);
+            }
+        }
+    }
+
+    return newArray;
 }
 
 export { generateSequence, compareSequence };
