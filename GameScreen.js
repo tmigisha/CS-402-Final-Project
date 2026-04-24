@@ -57,7 +57,7 @@ const iconSet = [
   {key: '&', color: 'purple'}
 ];
 
-const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled}) => {
+const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDuplicates}) => {
   const [guesses, setGuesses] = useState(
     Array(numOfTries).fill(null).map(() => Array(4).fill(null))
   );
@@ -65,13 +65,11 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled}) => {
   const [currentRow, setCurrentRow] = useState(numOfTries - 1);
   const [currentSlot, setCurrentSlot] = useState(0);
   const [secretPattern, setSecretPattern] = useState([]);
-  const [winsGame, setWinsGame] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
 
   const activeIcons = iconSet.slice(0, numOfSymbols);
 
   useEffect(() => {
-    const secretIndices = generateSequence(numOfSymbols, 4);
+    const secretIndices = generateSequence(numOfSymbols, 4, hasDuplicates).flat();
     const patternObjects = secretIndices.map(index => iconSet[index]);
     setSecretPattern(patternObjects); 
     console.log(secretIndices);   
@@ -86,21 +84,41 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled}) => {
       const nextSlot = currentSlot + 1;
 
       if (nextSlot === 4) {
-        const result = compareSequence(secretPattern.map(s => s.key), 
-          newGuesses[currentRow].map(g => g.key), positionEnabled);
+        const result = compareSequence(
+          secretPattern.map(s => s.key), 
+          newGuesses[currentRow].map(g => g.key), 
+          positionEnabled);
+        console.log(result);
+
+
         const newRowClues = [...rowClues];
         newRowClues[currentRow] = result;
         setRowClues(newRowClues);
 
-        setWinsGame(result.every(num => num == 2));
-    
-        if (currentRow === 0) {
-          setGameOver(true);
+        if (result.every(num => (num === 2))) {
+          Alert.alert(
+            'You Won!',
+            'You guessed the pattern!',
+            [
+              { text: 'Home', onPress: () => setStart(false) },
+              { text: 'New Game', onPress: resetGame, style: 'bold' }
+            ]
+          );
+        } else if (currentRow === 0) {
+          const patternString = secretPattern.map(item => item.key).join(' ');
+
+          Alert.alert(
+            'Game Over',
+            `The corrct pattern was ${patternString}`,
+            [
+              { text: 'Home', onPress: () => setStart(false) },
+              { text: 'New Game', onPress: resetGame, style: 'bold' }
+            ]
+          );
         } else {
           setCurrentRow(currentRow - 1); // move up a row
           setCurrentSlot(0);             // reset slot
         }   
-
       } else {
         setCurrentSlot(nextSlot);
       }
@@ -136,12 +154,19 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled}) => {
     }
   };
 
+
   const resetGame = () => {
     const emptyBoard = Array(numOfTries)
       .fill(null)
       .map(() => Array(4).fill(null));
+    const emptyClues = Array(numOfTries).fill([]);
 
-    setSecretPattern(generateSequence(numOfSymbols, 4));
+    const secretIndices = generateSequence(numOfSymbols, 4, hasDuplicates).flat();
+    const patternObjects = secretIndices.map(index => iconSet[index]);
+    setSecretPattern(patternObjects); 
+    console.log(secretIndices);
+
+    setRowClues(emptyClues);
     setGuesses(emptyBoard);
     setCurrentRow(numOfTries - 1);
     setCurrentSlot(0);
