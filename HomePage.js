@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 20,
     alignItems: 'center',
-    padding: 20
+    padding: 20,
+    borderRadius: 20
   },
   title: {
     fontWeight: 'bold',
@@ -69,14 +70,7 @@ const puzzleLength = [
 ];
 
 const HomePage = ({numOfSymbols, setNumOfSymbols, numOfTries, setNumOfTries, positionEnabled, 
-                  setPositionEnabled, duplicatesEnabled, setDuplicatesEnabled, start, setStart}) => {
-  // const [numOfSymbols, setNumOfSymbols] = useState(6);
-  // const [numOfTries, setNumOfTries] = useState(8);
-  // const [positionEnabled, setPositionEnabled] = useState(false);
-  // const [duplicatesEnabled, setDuplicatesEnabled] = useState(false);
-  // const [start, setStart] = useState(false);
-
-
+                  setPositionEnabled, noDuplicates, setNoDuplicates, start, setStart}) => {
 
   return (
     <View style={styles.container}>
@@ -119,8 +113,8 @@ const HomePage = ({numOfSymbols, setNumOfSymbols, numOfTries, setNumOfTries, pos
       <View style={styles.menuRow}>
         <Text style={styles.text}>No duplicates:</Text>
         <TouchableOpacity 
-          style={[styles.checkbox, duplicatesEnabled && styles.enabled]} 
-          onPress={() => setDuplicatesEnabled(!duplicatesEnabled)}>
+          style={[styles.checkbox, noDuplicates && styles.enabled]} 
+          onPress={() => {setNoDuplicates(!noDuplicates);}}>
         </TouchableOpacity>
       </View>
 
