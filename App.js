@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, Button, StyleSheet, Text, View, Alert, useWindowDimensions } from 'react-native';
-
-
 import HomePage from './HomePage';
 import GameScreen from './GameScreen';
 
@@ -10,9 +8,8 @@ const App = () => {
   const [numOfSymbols, setNumOfSymbols] = useState(6);
   const [numOfTries, setNumOfTries] = useState(8);
   const [positionEnabled, setPositionEnabled] = useState(false);
-  const [duplicatesEnabled, setDuplicatesEnabled] = useState(false);
+  const [noDuplicates, setNoDuplicates] = useState(false);
   const [start, setStart] = useState(false);
- 
 
   return (
     <>
@@ -20,8 +17,9 @@ const App = () => {
         <GameScreen 
           numOfSymbols={numOfSymbols}
           numOfTries={numOfTries}
-          setStart={setStart} 
-        
+          setStart={setStart}
+          positionEnabled={positionEnabled}
+          hasDuplicates={noDuplicates}
         />
       ) : (
         <HomePage 
@@ -31,18 +29,15 @@ const App = () => {
           setNumOfTries={setNumOfTries}
           positionEnabled={positionEnabled}
           setPositionEnabled={setPositionEnabled}
-          duplicatesEnabled={duplicatesEnabled}
-          setDuplicatesEnabled={setDuplicatesEnabled}
+          noDuplicates={noDuplicates}
+          setNoDuplicates={setNoDuplicates}
           start={start}
           setStart={setStart}
         />
       )}
     </>
   );
-
-  
-
-
 }
 
 export default App;
+
