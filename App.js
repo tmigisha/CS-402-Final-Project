@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, TouchableOpacity, Button, StyleSheet, Text, View, Alert, useWindowDimensions } from 'react-native';
 import HomePage from './HomePage';
 import GameScreen from './GameScreen';
 
@@ -19,8 +18,7 @@ const App = () => {
           numOfTries={numOfTries}
           setStart={setStart}
           positionEnabled={positionEnabled}
-          hasDuplicates={!noDuplicates}
-          
+          noDuplicates={noDuplicates}
         />
       ) : (
         <HomePage 
