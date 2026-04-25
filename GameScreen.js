@@ -5,34 +5,34 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { generateSequence, compareSequence } from './scripts';
 
 
-
 const styles = StyleSheet.create({
   inputBoxContainer: {
-    flex: 1,
+    flex: 0.8,
     flexDirection: 'row',
     margin: 10,
+    marginBottom: 50,
     padding: 7,
-    paddingLeft: 10,
+    paddingLeft: 20,
     borderWidth: 2,
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    alignItems: 'center'
   },
   board: {
-  flex: 3,
-  paddingTop: 10,
-  margin: 10,
-  padding: 5,
-  borderWidth: 2,
-  marginTop: 20,
-  width: '95%',
-  alignSelf: 'center'
-  
+    flex: 3,
+    paddingTop: 10,
+    margin: 10,
+    padding: 5,
+    borderWidth: 2,
+    marginTop: 40,
+    width: '95%',
+    alignSelf: 'center'
   },
   icon: {
     borderWidth: 2,
     justifyContent: 'center',
     width: 50,
     height: 50,
-    margin: 4
+    margin: 6
   },
   iconText: {
     color: 'white',
@@ -62,7 +62,7 @@ const iconSet = [
   {key: '&', color: 'purple'}
 ];
 
-const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDuplicates}) => {
+const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, noDuplicates}) => {
   const [guesses, setGuesses] = useState(
     Array(numOfTries).fill(null).map(() => Array(4).fill(null))
   );
@@ -74,12 +74,12 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
   const activeIcons = iconSet.slice(0, numOfSymbols);
 
   useEffect(() => {
-    const secretIndices = generateSequence(numOfSymbols, 4, hasDuplicates).flat();
+    const secretIndices = generateSequence(numOfSymbols, 4, noDuplicates).flat();
     const patternObjects = secretIndices.map(index => iconSet[index]);
     setSecretPattern(patternObjects); 
     console.log(secretIndices);
    
-  }, [numOfSymbols, numOfTries, hasDuplicates]);
+  }, [numOfSymbols, numOfTries, noDuplicates]);
 
   const handleIconPress = (symbol) => {
     if (currentRow >= 0 && currentSlot < 4) {
@@ -171,7 +171,7 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
       .map(() => Array(4).fill(null));
     const emptyClues = Array(numOfTries).fill([]);
 
-    const secretIndices = generateSequence(numOfSymbols, 4, hasDuplicates).flat();
+    const secretIndices = generateSequence(numOfSymbols, 4, noDuplicates).flat();
     const patternObjects = secretIndices.map(index => iconSet[index]);
     setSecretPattern(patternObjects); 
     console.log(secretIndices);
@@ -229,6 +229,7 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
               item3={item[2] || {key: '', color: 'transparent'}}
               item4={item[3] || {key: '', color: 'transparent'}}
               patternCheck={rowClues[index]}
+              positionEnabled={positionEnabled}
             />
           )}
           keyExtractor={(item, index) => index.toString()}
