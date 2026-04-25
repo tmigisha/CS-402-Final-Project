@@ -3,21 +3,14 @@
  * Return a defined-length array of random integers from 0 to numSymbols - 1.
  * @param {int} numSymbols 
  * @param {int} seqLength
- * @param {boolean} hasDuplicates
+ * @param {boolean} noDuplicates
  * @returns {int[]}
  */
-function generateSequence(numSymbols, seqLength, hasDuplicates)
+function generateSequence(numSymbols, seqLength, noDuplicates)
 {
     const sequence = [];
 
-    if(hasDuplicates) // Return an entirely random sequence.
-    {
-        for (var i = 0; i < seqLength; i++)
-        {
-            sequence.push(Math.floor(Math.random() * numSymbols));
-        }
-    }
-    else // Gotta do some tracking...
+    if(noDuplicates) // Gotta do some tracking...
     {
         if(seqLength > numSymbols) // Last-minute error checking
         {
@@ -32,11 +25,17 @@ function generateSequence(numSymbols, seqLength, hasDuplicates)
         }
 
         // For each integer in the sequence, select an element from the pool and remove it for future iterations.
-        for (var i = 0; i < seqLength; i++)
+        for (var j = 0; j < seqLength; j++)
         {
             const index = Math.floor(Math.random() * pool.length); // Random index based on the remaining length
             const nextSymbol = pool.splice(index, 1); // Select and remove the single element at that index
             sequence.push(nextSymbol); // Add the element to the sequence
+        }
+    } else // Return an entirely random sequence (may have duplicates).
+    {
+        for (var k = 0; k < seqLength; k++)
+        {
+            sequence.push(Math.floor(Math.random() * numSymbols));
         }
     }
 
