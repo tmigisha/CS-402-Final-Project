@@ -19,7 +19,8 @@ const App = () => {
           numOfTries={numOfTries}
           setStart={setStart}
           positionEnabled={positionEnabled}
-          hasDuplicates={noDuplicates}
+          hasDuplicates={!noDuplicates}
+          
         />
       ) : (
         <HomePage 

@@ -5,13 +5,15 @@ import { FlatList, TouchableOpacity, Button, StyleSheet, Text, View, Alert, useW
 const styles = StyleSheet.create({
   gameRow: {
     margin: 4,
+    marginVertical: 10,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     paddingRight: 20
   },
   square: {
-    width: 40,
-    height: 40,
+    
+    width: 45,
+    height: 45,
     borderWidth: 1,
     borderColor: 'black',
     justifyContent: 'center'
@@ -21,11 +23,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   clueBox: {
-    borderWidth: 1, 
+     flex: 1,
+    maxWidth: 80, 
+    borderWidth: 1,
     marginRight: 20, 
     width: 80, 
     flexDirection: 'row', 
-    flexWrap: 'wrap' 
+    flexWrap: 'wrap', 
+    backgroundColor: 'white'
   }
 });
 
@@ -46,9 +51,13 @@ const BoardRow = ({item1, item2, item3, item4, patternCheck}) => {
   }
 
   const renderSlot = (item) => {
+  const isFilled = item && item.key !== '';
     return (
-      <View style={styles.square}>
-        <Text style={[styles.symbolText, {color: item.color, textAlign: 'center'}]}>{item.key}</Text>
+      <View style={[
+        styles.square,
+        { backgroundColor: isFilled ? item.color : 'white' } 
+      ]}>
+        <Text style={[styles.symbolText, {color: 'white', textAlign: 'center'}]}>{item.key}</Text>
       </View>
     );
   }

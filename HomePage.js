@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, Button, StyleSheet, Text, View, Alert, useWindowDimensions } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -27,6 +28,7 @@ const styles = StyleSheet.create({
   }, 
   dropdown: {
     height: 30,
+    width: 50,
     borderColor: 'gray',
     borderWidth: 0.5,
     margin: 8,

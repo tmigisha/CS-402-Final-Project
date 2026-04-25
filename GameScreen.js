@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, Button, StyleSheet, Text, View, Alert, useWindowDimensions } from 'react-native';
 import BoardRow from './BoardRow';
+import { LinearGradient } from 'expo-linear-gradient';
 import { generateSequence, compareSequence } from './scripts';
+
 
 
 const styles = StyleSheet.create({
@@ -15,12 +17,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   board: {
-    paddingTop: 10,
-    margin: 10,
-    padding: 5,
-    borderWidth: 2,
-    marginTop: 20,
-    height: 410
+  flex: 3,
+  paddingTop: 10,
+  margin: 10,
+  padding: 5,
+  borderWidth: 2,
+  marginTop: 20,
+  width: '95%',
+  alignSelf: 'center'
+  
   },
   icon: {
     borderWidth: 2,
@@ -52,7 +57,7 @@ const iconSet = [
   {key: '*', color: 'red'},
   {key: '#', color: 'blue'},
   {key: '!', color: 'green'},
-  {key: '~', color: 'yellow'},
+  {key: '~', color: '#fde047'},
   {key: '@', color: 'orange'},
   {key: '&', color: 'purple'}
 ];
@@ -72,8 +77,9 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
     const secretIndices = generateSequence(numOfSymbols, 4, hasDuplicates).flat();
     const patternObjects = secretIndices.map(index => iconSet[index]);
     setSecretPattern(patternObjects); 
-    console.log(secretIndices);   
-  }, []);
+    console.log(secretIndices);
+   
+  }, [numOfSymbols, numOfTries, hasDuplicates]);
 
   const handleIconPress = (symbol) => {
     if (currentRow >= 0 && currentSlot < 4) {
@@ -84,6 +90,7 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
       const nextSlot = currentSlot + 1;
 
       if (nextSlot === 4) {
+        
         const result = compareSequence(
           secretPattern.map(s => s.key), 
           newGuesses[currentRow].map(g => g.key), 
@@ -96,14 +103,16 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
         setRowClues(newRowClues);
 
         if (result.every(num => (num === 2))) {
+          console.log("WIN TRIGGERED");
           Alert.alert(
             'You Won!',
             'You guessed the pattern!',
             [
               { text: 'Home', onPress: () => setStart(false) },
-              { text: 'New Game', onPress: resetGame, style: 'bold' }
+              { text: 'New Game', onPress: resetGame}
             ]
           );
+        
         } else if (currentRow === 0) {
           const patternString = secretPattern.map(item => item.key).join(' ');
 
@@ -111,10 +120,11 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
             'Game Over',
             `The corrct pattern was ${patternString}`,
             [
-              { text: 'Home', onPress: () => setStart(false) },
-              { text: 'New Game', onPress: resetGame, style: 'bold' }
+              { text: 'Home', onPress: () => setStart(false), style: 'bold'},
+              { text: 'New Game', onPress: resetGame, style: 'bold'}
             ]
           );
+          
         } else {
           setCurrentRow(currentRow - 1); // move up a row
           setCurrentSlot(0);             // reset slot
@@ -209,7 +219,7 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
 
   return (
     <View style={{flex: 1}}>
-      <View style={styles.board}>
+      <LinearGradient colors={['#b5eef5', '#f3f4f6']} style={styles.board} >
         <FlatList
           data={guesses}
           renderItem={({item, index}) => (
@@ -224,7 +234,7 @@ const GameScreen = ({numOfSymbols, numOfTries, setStart, positionEnabled, hasDup
           keyExtractor={(item, index) => index.toString()}
         />
 
-      </View>
+      </LinearGradient>
       {inputBox}
     </View>
   );
