@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   clueBox: {
-     flex: 1,
+    flex: 1,
+    paddingHorizontal: 5,
     maxWidth: 80, 
     borderWidth: 1,
     marginRight: 20, 
@@ -35,39 +36,50 @@ const styles = StyleSheet.create({
 });
 
 
-const BoardRow = ({item1, item2, item3, item4, patternCheck}) => {
-  const renderClue = ({item}) => {
+const BoardRow = ({item1, item2, item3, item4, patternCheck, positionEnabled}) => {
+  const getClueColor = (clueValue, index) => {
+    if (clueValue === 2 && positionEnabled) {
+      const items = [item1, item2, item3, item4];
+      return items[index]?.color || 'black';
+    }
+    return 'black';
+  }
+
+  const renderClue = ({item, index}) => {
     if (item === 2) {
       return (
-        <View style={{paddingHorizontal: 3}}><Text style={{fontSize: 18}}>+</Text></View>
+        <View style={{paddingHorizontal: 3}}><Text style={{fontSize: 18, color: getClueColor(2, index)}}>+</Text></View>
       )
         }
     if (item === 1) {
       return (
-        <View style={{paddingHorizontal: 3}}><Text style={{fontSize: 18}}>-</Text></View>
+        <View style={{paddingHorizontal: 3}}><Text style={{fontSize: 18, color: 'black'}}>-</Text></View>
       )
     }
     return null;
   }
 
   const renderSlot = (item) => {
-  const isFilled = item && item.key !== '';
-    return (
-      <View style={[
-        styles.square,
-        { backgroundColor: isFilled ? item.color : 'white' } 
-      ]}>
-        <Text style={[styles.symbolText, {color: 'white', textAlign: 'center'}]}>{item.key}</Text>
-      </View>
-    );
-  }
+    const isFilled = item && item.key !== '';
+      return (
+        <View style={[
+          styles.square,
+          { backgroundColor: isFilled ? item.color : 'white' } 
+        ]}>
+          <Text style={[styles.symbolText, {color: 'white', textAlign: 'center'}]}>{item.key}</Text>
+        </View>
+      );
+    }
 
   return (
     <View style={styles.gameRow}>
       <View style={styles.clueBox}>
-        {patternCheck && patternCheck.map((val, idx) => (
-           <View key={idx}>{renderClue({item: val})}</View>
-        ))}
+        <FlatList 
+          data={patternCheck}
+          keyExtractor={(item, index) => index.toString()} 
+          renderItem={renderClue}
+          numColumns={4}
+        />
       </View>
 
       {renderSlot(item1)}
@@ -79,4 +91,3 @@ const BoardRow = ({item1, item2, item3, item4, patternCheck}) => {
 }
 
 export default BoardRow;
-
