@@ -19,10 +19,11 @@ This app is the classic board game, mastermind digitalized. Where the computer i
 
 To compile this project, open it up in the expo app via url, which can be found here 
 
-The app should open up to a home page with various options for gameplay. For defult settings, simiply press start. The default settings are 8 guesses, duplicate color/patterns allowed and no hints. See overview for the list of options.
+The app should open up to a home page with various options for gameplay. For default settings, simiply press start. The default settings are 8 guesses, duplicate color/patterns allowed and no hints. See overview for the list of options.
 
+There is a set of 6 colors to choose from: red,blue,green, yellow, orange, purple. Each game has a ranomly generated pattern of 4 colors. The goal of the game is to guess the pattern.  The  "+" means that one of the colors is in the pattern and is in the right place. A  "-" means it is the right color in the pattern but in the wrong place. No symbol means a color is wrong and not in the right place. The order of the hints does not tell you what order each color is in, just that there is a correct color in the right place or there is a correct color but in the wrong place. 
 
-
+Click on any of the associated color buttons to guess. After 4 guesses, the hint will show how close you are to the correct guess.  To win, the user must guess all 4 "+". To undo your move, press undo. To play a new game, presss new. To go back to homepage, press home. 
 
 ## Development
 
